@@ -123,21 +123,32 @@
     }
 
     #viewButtons {
-      margin: 10px;
+      display: flex;
+      margin: 4px;
     }
 
     #viewButtons button {
-      padding: 6px 12px;
-      margin-right: 10px;
-      border-radius: 5px;
-      border: none;
+      padding: 12px 50px;
+      /*border-radius: 5px;*/
+      border-width: 1px;
       background-color: #0077cc;
+      border-color: #1370b3;
       color: white;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 18px;
+      transition: background-color 0.3s, transform 0.2s;
     }
 
     #viewButtons button:hover {
       background-color: #005fa3;
+      transform: scale(1.05);
+    }
+
+    #viewButtons button.active {
+      background-color: #77c6ff;
     }
 
   </style>
@@ -148,10 +159,16 @@
   <h1>Suche einen guten Ort für eine Stadt-Terrasse.</h1>
 
   <div id="viewButtons">
-    <button onclick="switchToMap()">Karte</button>
-    <button onclick="switchToStreetView()">StreetView</button>
-    <button onclick="switchTo3D()">3D</button>
-  </div>
+  <button id="mapBtn" onclick="switchToMap()">
+    🗺️ <span>Karte</span>
+  </button>
+  <button id="streetBtn" onclick="switchToStreetView()">
+    🚶<span>Straße</span>
+  </button>
+  <button id="view3dBtn" onclick="switchTo3D()">
+    🏙️ <span>3D</span>
+  </button>
+</div>
 
   <div id="markerContainer">
     <div id="search-box">
@@ -235,6 +252,17 @@
       }
     }
 
+    function setActiveViewButton(activeId) {
+      const buttons = ["mapBtn", "streetBtn", "view3dBtn"];
+      buttons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.classList.toggle("active", id === activeId);
+        }
+      });
+    }
+
+
     function switchToMap() {
       updateCurrentView();
 
@@ -250,6 +278,8 @@
 
       map.setCenter(currentPosition);
       map.setZoom(currentZoom);
+
+      setActiveViewButton("mapBtn");
     }
 
     function switchTo3D() {
@@ -269,6 +299,8 @@
       map3d.setAttribute("tilt", 0);
       //map3d.setAttribute("heading", currentHeading);
       map3d.setAttribute("range", currentRange);
+
+      setActiveViewButton("view3dBtn");
     }
 
     function switchToStreetView() {
@@ -283,6 +315,7 @@
         zoom: 1
       });
       streetView.setVisible(true);
+      setActiveViewButton("streetBtn");
     }
 
     function initAutocomplete() {
@@ -325,6 +358,7 @@
       document.getElementById("map").style.display = "none";
       document.getElementById("pano").style.display = "none";
       document.getElementById("map3d").style.display = "block";
+      setActiveViewButton("view3dBtn");
     }
 
     const placeMarkerBtn = document.getElementById('placeMarkerBtn');
