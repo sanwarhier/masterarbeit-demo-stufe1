@@ -211,7 +211,15 @@
         const marker = document.getElementById("marker");
         const placePicker = document.getElementById("place-picker");
 
-        map.innerMap.setOptions({mapTypeControl: false});
+        map.innerMap.setOptions({
+          zoomControl: false,
+          cameraControl: false,
+          mapTypeControl: false,
+          scaleControl: false,
+          streetViewControl: false,
+          rotateControl: false,
+          fullscreenControl: false
+        });
 
         placePicker.addEventListener('gmpx-placechange', () => {
           const place = placePicker.value;

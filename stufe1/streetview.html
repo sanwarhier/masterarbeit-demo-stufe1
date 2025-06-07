@@ -151,7 +151,11 @@
         panorama = new google.maps.StreetViewPanorama(document.getElementById("map"), {
           position: defaultLocation,
           pov: { heading: 0, pitch: 0 },
-          visible: true
+          visible: true,
+          addressControl: false,
+          fullscreenControl: false,
+          panControl: false,
+          zoomControl: false,
         });
 
         const input = document.getElementById("autocomplete");

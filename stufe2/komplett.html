@@ -303,12 +303,22 @@
         center: currentPosition,
         zoom: currentZoom,
         streetViewControl: false,
+        zoomControl: false,
+        cameraControl: false,
+        mapTypeControl: false,
+        scaleControl: false,
+        rotateControl: false,
+        fullscreenControl: false
       });
 
       streetView = new google.maps.StreetViewPanorama(document.getElementById("pano"), {
         position: currentPosition,
         pov: { heading: currentHeading, pitch: 0 },
-        visible: false
+        visible: false,
+        addressControl: false,
+        fullscreenControl: false,
+        panControl: false,
+        zoomControl: false,
       });
 
       map.setStreetView(streetView);
