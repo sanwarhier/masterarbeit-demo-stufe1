@@ -12,6 +12,10 @@
       align-items: center;
       flex-direction: column;
       font-family: Arial;
+
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10 and IE 11 */
+      user-select: none; /* Standard syntax */
     }
 
     #placeMarkerContainer {
@@ -23,19 +27,26 @@
     }
 
     #placeMarkerBtn {
-      margin: 10px;
-      padding: 10px 20px;
+      margin: 4px;
       padding-left: 30px;
-      /*background-color: #0066cc;*/
       color: rgb(255, 255, 255);
-      border: none;
-      border-radius: 5px;
+      padding: 12px 50px;
+      font-size: 18px;
+      /*border-radius: 5px;*/
+      border-width: 1px;
+      background-color: #0077cc;
+      border-color: #1370b3;
       cursor: pointer;
       background-image: url(cursor.png);
-      background-position: 3% 50%; 
-      background-size: 25px; 
+      background-position: 3% 50%;
+      background-size: 25px;
       background-repeat: no-repeat;
-      background-color: #0066cc;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    #placeMarkerBtn:hover {
+      background-color: #005fa3;
+      transform: scale(1.05);
     }
 
     #placeMarkerBtn.active {
@@ -89,15 +100,16 @@
 
     #infoBox {
       background-color: white;
-      padding: 10px 20px;
-      border-radius: 10px;
+      font-size: 18px;
+      padding: 12px 50px;
       text-align: center;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
     #backBtn {
       margin-left: 20px;
-      padding: 8px 16px;
+      font-size: 16px;
+      padding: 12px 12px;
       background-color: crimson;
       color: white;
       border: none;
@@ -145,11 +157,19 @@
         font-weight: 300;
       }
 
+      .pac-target-input {
+        padding: 12px 30px;
+        font-size: 20px;
+        border-radius: 0;
+      }
+
       #place-picker {
         box-sizing: border-box;
         width: 100%;
-        padding: 0.5rem 1rem 1rem;
+        padding: 12px 12px;
         display: inline-block;
+        font-size: 18px;
+        border-radius: 0;
       }
   </style>
   <!--<script
@@ -173,15 +193,15 @@
       solution-channel="GMP_CCS_autocomplete_v5">
     </gmpx-api-loader>
     <gmp-map id="map" center="51.51496027592097, 7.175739596880455" zoom="17" map-id="DEMO_MAP_ID">
-      <div slot="control-block-start-inline-start" class="pac-card" id="pac-card">
-        <gmpx-place-picker id="place-picker" for-map="map"></gmpx-place-picker>
+      <div slot="control-block-start-inline-center" class="pac-card" id="pac-card">
+        <gmpx-place-picker placeholder="Suchen..." id="place-picker" for-map="map"></gmpx-place-picker>
       </div>
       <gmp-advanced-marker id="marker"></gmp-advanced-marker>
     </gmp-map>
     <div id="infoOverlay">
       <div id="infoBox">
         <span>✅ Fertig!</span>
-        <button id="backBtn">Zurück</button>
+        <button id="backBtn">❌ Zurück</button>
       </div>
     </div>
   </div>

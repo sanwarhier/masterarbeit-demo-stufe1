@@ -12,6 +12,10 @@
       align-items: center;
       flex-direction: column;
       font-family: Arial;
+
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10 and IE 11 */
+      user-select: none; /* Standard syntax */
     }
 
     #placeMarkerContainer {
@@ -23,27 +27,26 @@
     }
 
     #placeMarkerBtn {
-      margin: 10px;
-      padding: 10px 20px;
+      margin: 4px;
       padding-left: 30px;
-      /*background-color: #0066cc;*/
       color: rgb(255, 255, 255);
-      border: none;
-      border-radius: 5px;
+      padding: 12px 50px;
+      font-size: 18px;
+      /*border-radius: 5px;*/
+      border-width: 1px;
+      background-color: #0077cc;
+      border-color: #1370b3;
       cursor: pointer;
       background-image: url(cursor.png);
-      background-position: 3% 50%; 
-      background-size: 25px; 
+      background-position: 3% 50%;
+      background-size: 25px;
       background-repeat: no-repeat;
-      background-color: #0066cc;
+      transition: background-color 0.3s, transform 0.2s;
     }
 
-    #placeMarkerBtn.active {
-      background-color: #cc0000;
-    }
-
-    #placeMarkerBtn:disabled {
-      background-color: #aaaaaa;
+    #placeMarkerBtn:hover {
+      background-color: #005fa3;
+      transform: scale(1.05);
     }
 
     #markerContainer {
@@ -89,15 +92,16 @@
 
     #infoBox {
       background-color: white;
-      padding: 10px 20px;
-      border-radius: 10px;
+      font-size: 18px;
+      padding: 12px 50px;
       text-align: center;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
     #backBtn {
       margin-left: 20px;
-      padding: 8px 16px;
+      font-size: 16px;
+      padding: 12px 12px;
       background-color: crimson;
       color: white;
       border: none;
@@ -106,22 +110,22 @@
     }
 
     #search-box {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  background: white;
-  padding: 6px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      background: white;
+      padding: 0px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
 
-#search-box input {
-  width: 300px;
-  padding: 6px 10px;
-  font-size: 16px;
-}
+    #search-box input {
+      width: 300px;
+      font-size: 16px;
+      padding: 12px 12px;
+    }
   </style>
 </head>
 
@@ -134,7 +138,7 @@
 
   <div id="markerContainer">
     <div id="search-box">
-      <input id="autocomplete" type="text" placeholder="Adresse suchen...">
+      <input id="autocomplete" type="text" placeholder="🔍 Suchen...">
     </div>    
     <gmp-map-3d mode="hybrid" center="51.51496027592097, 7.175739596880455" range="2000" tilt="75" heading="330"></gmp-map-3d>
     <script async
@@ -143,7 +147,7 @@
     <div id="infoOverlay">
       <div id="infoBox">
         <span>✅ Fertig!</span>
-        <button id="backBtn">Zurück</button>
+        <button id="backBtn">❌ Zurück</button>
       </div>
     </div>
   </div>
