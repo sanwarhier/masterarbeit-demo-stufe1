@@ -321,7 +321,21 @@
       document.getElementById("map3d").style.display = "none";
       document.getElementById("map").style.display = "none";
       document.getElementById("pano").style.display = "block";
-      streetView.setPosition(currentPosition);
+
+      const streetViewService = new google.maps.StreetViewService();
+      const radius = 500;
+
+      streetViewService.getPanorama({ location: currentPosition, radius: radius }, (data, status) => {
+        if (status === "OK") {
+          console.log(data.location.latLng);
+          streetView.setPosition(data.location.latLng);
+        } else {
+          alert("An diesem Ort ist kein Street View verfügbar.");
+          console.log(currentPosition);
+          streetView.setPosition(currentPosition);
+        }
+      });
+
       streetView.setPov({
         heading: currentHeading,
         pitch: 0,
@@ -341,6 +355,18 @@
           alert("Adresse nicht gefunden");
           return;
         }
+
+        const streetViewService = new google.maps.StreetViewService();
+        const radius = 500;
+
+        streetViewService.getPanorama({ location: place.geometry.location, radius: radius }, (data, status) => {
+          if (status === "OK") {
+            streetView.setPosition(data.location.latLng);
+          } else {
+            alert("An diesem Ort ist kein Street View verfügbar.");
+          }
+        });
+
         const coords = place.geometry.location;
         document.getElementById("map3d").setAttribute("center", `${coords.lat()},${coords.lng()}`);
       });

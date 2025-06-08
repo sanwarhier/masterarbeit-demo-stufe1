@@ -182,8 +182,19 @@
             return;
           }
 
+          const streetViewService = new google.maps.StreetViewService();
+          const radius = 500;
+
+          streetViewService.getPanorama({ location: place.geometry.location, radius: radius }, (data, status) => {
+            if (status === "OK") {
+              panorama.setPosition(data.location.latLng);
+            } else {
+              alert("An diesem Ort ist kein Street View verfügbar.");
+            }
+          });
+
           // Zur Adresse in Street View wechseln
-          panorama.setPosition(place.geometry.location);
+          //panorama.setPosition(place.geometry.location);
         });
       }
 

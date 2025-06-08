@@ -192,6 +192,36 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    #no-streetview-container {
+      display: none;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transition: all 0.3s;
+    }
+
+    #no-streetview-container-background {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: rgb(63, 63, 63); /* Fallback for older browsers without RGBA-support */
+      background: rgba(0, 0, 0, 0.911);
+      display: flex;
+      z-index: 10;
+    }
+
+
+    #no-streetview-content {
+      font-size: 18px;
+      width: 50%;
+      top: 50%;
+      margin: auto;
+      padding: 12px 12px;
+      opacity: 1;
+      background-color: white;
+      z-index: 11;
+    }
   </style>
 </head>
 <body>
@@ -215,6 +245,11 @@
       </div>
     </div>
     <div class="view-pane" id="rightPane">
+      <div id="no-streetview-container">
+        <div id="no-streetview-container-background">
+          <div id="no-streetview-content">Hier gibt es keine Straßen-Ansicht.</div>
+        </div>
+      </div>
       <div id="viewSelector">
         <div class="view-select">
           <select id="rightViewSelect">
@@ -239,6 +274,7 @@
   let currentPosition = { lat: 51.51496027592097, lng: 7.175739596880455 };
   let currentZoom = 18;
   let syncing = false;
+  let streetViewPositionMarker = null;
 
   function initAutocomplete() {
     const input = document.getElementById("autocomplete");
@@ -267,7 +303,6 @@
         cameraControl: false,
         mapTypeControl: false,
         scaleControl: false,
-        streetViewControl: false,
         rotateControl: false,
         fullscreenControl: false
       });
@@ -307,14 +342,36 @@
     updateAllViews();
   }
 
-  function syncOtherSide(changedSide) {
+  async function getStreetViewPosition(currentPosition) {
+    const streetViewService = new google.maps.StreetViewService();
+    const radius = 500;
+
+    return new Promise((resolve) => {
+      streetViewService.getPanorama({ location: currentPosition, radius: radius }, (data, status) => {
+        if (status === "OK") {
+          document.getElementById("no-streetview-container").style.display = "none";
+          resolve({
+            lat: data.location.latLng.lat(),
+            lng: data.location.latLng.lng()
+          });
+        } else {
+          //alert("An diesem Ort ist kein Street View verfügbar.");
+          document.getElementById("no-streetview-container").style.display = "block";
+          resolve(currentPosition);
+        }
+      });
+    });
+  }
+
+  async function syncOtherSide(changedSide) {
     const otherSide = changedSide === "left" ? "right" : "left";
     if (maps[otherSide]) {
       maps[otherSide].setZoom(currentZoom);
       maps[otherSide].setCenter(currentPosition);
     }
 
-    streetViews[otherSide].setPosition(currentPosition);
+    const pos = await getStreetViewPosition(currentPosition);
+    streetViews[otherSide].setPosition(pos);
 
     const map3d = document.getElementById(`map3d-${otherSide}`);
     if (map3d) {
@@ -323,7 +380,77 @@
     }
   }
 
-  function switchView(side) {
+  function setupStreetViewTracking() {
+    const sv = streetViews["right"];
+    const mapLeft = maps["left"];
+
+    const smileyWithCone = {
+      url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180">
+        <!-- Sichtkegel -->
+        <path d="M90,90 L45,30 A75,75 0 0,1 135,30 Z"
+              fill="rgba(255,165,0,0.6)"
+              transform="rotate(0,90,90)" />
+
+        <!-- Smiley -->
+        <circle cx="90" cy="90" r="30" fill="yellow" stroke="black" stroke-width="6"/>
+        <circle cx="81" cy="84" r="4.5" fill="black"/>
+        <circle cx="99" cy="84" r="4.5" fill="black"/>
+        <path d="M78,102 Q90,114 102,102" stroke="black" stroke-width="6" fill="none"/>
+      </svg>
+      `),
+      scaledSize: new google.maps.Size(100, 100),
+      anchor: new google.maps.Point(50, 50)
+    };
+
+    if (!streetViewPositionMarker) {
+      streetViewPositionMarker = new google.maps.Marker({
+        map: mapLeft,
+        icon: smileyWithCone,
+        position: sv.getPosition(),
+        rotation: 0
+      });
+    } else {
+      streetViewPositionMarker.setMap(mapLeft);
+    }
+
+    // Update Marker Position
+    sv.addListener("position_changed", () => {
+      const pos = sv.getPosition();
+      if (pos && streetViewPositionMarker) {
+        streetViewPositionMarker.setPosition(pos);
+      }
+    });
+
+    sv.addListener("pov_changed", () => {
+      const heading = sv.getPov().heading;
+
+      const updatedSvg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180">
+        <!-- Sichtkegel -->
+        <path d="M90,90 L45,30 A75,75 0 0,1 135,30 Z"
+              fill="rgba(255,165,0,0.6)"
+              transform="rotate(${heading},90,90)" />
+
+        <!-- Smiley -->
+        <circle cx="90" cy="90" r="30" fill="yellow" stroke="black" stroke-width="6"/>
+        <circle cx="81" cy="84" r="4.5" fill="black"/>
+        <circle cx="99" cy="84" r="4.5" fill="black"/>
+        <path d="M78,102 Q90,114 102,102" stroke="black" stroke-width="6" fill="none"/>
+      </svg>
+        `;
+
+      const updatedIcon = {
+        url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(updatedSvg),
+        scaledSize: new google.maps.Size(100, 100),
+        anchor: new google.maps.Point(50, 50)
+      };
+
+      streetViewPositionMarker.setIcon(updatedIcon);
+    });
+  }
+
+  async function switchView(side) {
     let view;
     if (side == "right"){
       view = document.getElementById(`rightViewSelect`).value;
@@ -340,8 +467,13 @@
       maps[side].setZoom(currentZoom);
     } else if (view === "street") {
       document.getElementById(`pano-${side}`).style.display = "block";
-      streetViews[side].setPosition(currentPosition);
+      const pos = await getStreetViewPosition(currentPosition);
+      streetViews[side].setPosition(pos);
       streetViews[side].setVisible(true);
+      if (streetViewPositionMarker) {
+        streetViewPositionMarker.setMap(maps["left"]);
+      }
+      setupStreetViewTracking();
     } else if (view === "3d") {
       const map3d = document.getElementById(`map3d-${side}`);
       map3d.style.display = "block";
@@ -358,13 +490,19 @@
     if (streetViews[side]) {
       streetViews[side].setVisible(false);
     }
+
+    if (streetViewPositionMarker) {
+      streetViewPositionMarker.setMap(null);
+    }
   }
 
-  function updateAllViews() {
-    ["left", "right"].forEach(side => {
+  async function updateAllViews() {
+    ["left", "right"].forEach(async (side) => {
       maps[side].setCenter(currentPosition);
       maps[side].setZoom(currentZoom);
-      streetViews[side].setPosition(currentPosition);
+
+      const pos = await getStreetViewPosition(currentPosition);
+      streetViews[side].setPosition(pos);
 
       const map3d = document.getElementById(`map3d-${side}`);
       map3d.setAttribute("center", `${currentPosition.lat},${currentPosition.lng}`);
