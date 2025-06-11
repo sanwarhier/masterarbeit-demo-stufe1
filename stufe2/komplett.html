@@ -125,14 +125,27 @@
       z-index: 9999;
       background: white;
       padding: 0px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgb(0, 0, 0);
     }
 
     #search-box input {
       width: 300px;
       font-size: 16px;
       padding: 12px 12px;
+      border: none;
+    }
+    #search-clear-button {
+      padding: 12px 12px;
+      background-color: rgb(255, 255, 255);
+      border: none;
+      cursor: pointer;
+    }
+    #search-clear-button div:hover {
+      transform: scale(1.2);
+    }
+    #search-clear-button div {
+      transition: transform 0.1s;
     }
 
     #viewButtons {
@@ -186,6 +199,8 @@
   <div id="markerContainer">
     <div id="search-box">
       <input id="autocomplete" type="text" placeholder="🔍 Suchen...">
+        <button id="search-clear-button"><div>✖️</div></button>
+      </input>
     </div>
 
     <gmp-map-3d id="map3d" mode="hybrid" center="51.51496027592097,7.175739596880455" range="2000" tilt="0" heading="0"></gmp-map-3d>
@@ -348,6 +363,7 @@
     function initAutocomplete() {
       const input = document.getElementById("autocomplete");
       const autocomplete = new google.maps.places.Autocomplete(input);
+      const searchClearBtn = document.getElementById('search-clear-button');
 
       autocomplete.addListener("place_changed", () => {
         const place = autocomplete.getPlace();
@@ -369,6 +385,10 @@
 
         const coords = place.geometry.location;
         document.getElementById("map3d").setAttribute("center", `${coords.lat()},${coords.lng()}`);
+      });
+
+      searchClearBtn.addEventListener('click', () => {
+        input.value = "";
       });
 
       map = new google.maps.Map(document.getElementById("map"), {
