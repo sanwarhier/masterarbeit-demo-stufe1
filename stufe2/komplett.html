@@ -340,7 +340,7 @@
       const streetViewService = new google.maps.StreetViewService();
       const radius = 500;
 
-      streetViewService.getPanorama({ location: currentPosition, radius: radius }, (data, status) => {
+      streetViewService.getPanorama({ location: currentPosition, radius: radius, source: google.maps.StreetViewSource.OUTDOOR }, (data, status) => {
         if (status === "OK") {
           console.log(data.location.latLng);
           streetView.setPosition(data.location.latLng);
@@ -375,7 +375,7 @@
         const streetViewService = new google.maps.StreetViewService();
         const radius = 500;
 
-        streetViewService.getPanorama({ location: place.geometry.location, radius: radius }, (data, status) => {
+        streetViewService.getPanorama({ location: place.geometry.location, radius: radius, source: google.maps.StreetViewSource.OUTDOOR }, (data, status) => {
           if (status === "OK") {
             streetView.setPosition(data.location.latLng);
           } else {

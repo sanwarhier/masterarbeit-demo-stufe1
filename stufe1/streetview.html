@@ -201,7 +201,7 @@
           const streetViewService = new google.maps.StreetViewService();
           const radius = 500;
 
-          streetViewService.getPanorama({ location: place.geometry.location, radius: radius }, (data, status) => {
+          streetViewService.getPanorama({ location: place.geometry.location, radius: radius, source: google.maps.StreetViewSource.OUTDOOR }, (data, status) => {
             if (status === "OK") {
               panorama.setPosition(data.location.latLng);
             } else {
