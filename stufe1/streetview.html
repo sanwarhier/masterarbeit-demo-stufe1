@@ -229,6 +229,9 @@
       markerContainer.addEventListener('mousemove', blockAllEvents, true);
       markerContainer.addEventListener('keydown', blockAllEvents, true);
       markerContainer.addEventListener('keyup', blockAllEvents, true);
+      markerContainer.addEventListener('touchstart', blockAllEvents, { passive: false, capture: true });
+      markerContainer.addEventListener('touchmove', blockAllEvents, { passive: false, capture: true });
+      markerContainer.addEventListener('touchend', blockAllEvents, { passive: false, capture: true });
     }
 
     function disableEventBlocking() {
@@ -237,6 +240,10 @@
       markerContainer.removeEventListener('mousemove', blockAllEvents, true);
       markerContainer.removeEventListener('keydown', blockAllEvents, true);
       markerContainer.removeEventListener('keyup', blockAllEvents, true);
+      markerContainer.removeEventListener('pointerup', blockAllEvents, true);
+      markerContainer.removeEventListener('touchstart', blockAllEvents, true);
+      markerContainer.removeEventListener('touchmove', blockAllEvents, true);
+      markerContainer.removeEventListener('touchend', blockAllEvents, true);
     }
 
     const placeMarkerBtn = document.getElementById('placeMarkerBtn');
