@@ -214,7 +214,7 @@
       enableEventBlocking();
     });
 
-    markerContainer.addEventListener('click', (e) => {
+    markerContainer.addEventListener('pointerup', (e) => {
       if (!placingMarker) return;
 
       e.stopPropagation();
