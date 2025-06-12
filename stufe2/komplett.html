@@ -57,6 +57,18 @@
       background-color: #aaaaaa;
     }
 
+    #interactionBlocker {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 5000;
+        display: none;
+        touch-action: none; /* wichtig für Tablets */
+        background-color: rgba(0,0,0,0); /* unsichtbar */
+      }
+
     #markerContainer {
       width: 100vw;
       height: 80vh;
@@ -202,6 +214,8 @@
         <button id="search-clear-button"><div>✖️</div></button>
       </input>
     </div>
+
+    <div id="interactionBlocker"></div>
 
     <gmp-map-3d id="map3d" mode="hybrid" center="51.51496027592097,7.175739596880455" range="2000" tilt="0" heading="0"></gmp-map-3d>
     <div id="map"></div>
@@ -426,19 +440,11 @@
     }
 
     function enableEventBlocking() {
-      markerContainer.addEventListener('mousedown', blockAllEvents, true);
-      markerContainer.addEventListener('mouseup', blockAllEvents, true);
-      markerContainer.addEventListener('mousemove', blockAllEvents, true);
-      markerContainer.addEventListener('keydown', blockAllEvents, true);
-      markerContainer.addEventListener('keyup', blockAllEvents, true);
+      document.getElementById("interactionBlocker").style.display = "block";
     }
 
     function disableEventBlocking() {
-      markerContainer.removeEventListener('mousedown', blockAllEvents, true);
-      markerContainer.removeEventListener('mouseup', blockAllEvents, true);
-      markerContainer.removeEventListener('mousemove', blockAllEvents, true);
-      markerContainer.removeEventListener('keydown', blockAllEvents, true);
-      markerContainer.removeEventListener('keyup', blockAllEvents, true);
+      document.getElementById("interactionBlocker").style.display = "none";
     }
 
     const placeMarkerBtn = document.getElementById('placeMarkerBtn');
