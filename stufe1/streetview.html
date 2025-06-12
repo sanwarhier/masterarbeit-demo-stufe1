@@ -50,6 +50,18 @@
         transition: transform 0.1s;
       }
 
+      #interactionBlocker {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 5000;
+        display: none;
+        touch-action: none; /* wichtig für Tablets */
+        background-color: rgba(0,0,0,0); /* unsichtbar */
+      }
+
 
       #placeMarkerContainer {
       display: flex;
@@ -161,6 +173,7 @@
           <button id="search-clear-button"><div>✖️</div></button>
         </input>
       </div>
+      <div id="interactionBlocker"></div>
       <div id="map"></div>
       <div id="infoOverlay">
         <div id="infoBox">
@@ -224,26 +237,11 @@
     }
 
     function enableEventBlocking() {
-      markerContainer.addEventListener('mousedown', blockAllEvents, true);
-      markerContainer.addEventListener('mouseup', blockAllEvents, true);
-      markerContainer.addEventListener('mousemove', blockAllEvents, true);
-      markerContainer.addEventListener('keydown', blockAllEvents, true);
-      markerContainer.addEventListener('keyup', blockAllEvents, true);
-      markerContainer.addEventListener('touchstart', blockAllEvents, { passive: false, capture: true });
-      markerContainer.addEventListener('touchmove', blockAllEvents, { passive: false, capture: true });
-      markerContainer.addEventListener('touchend', blockAllEvents, { passive: false, capture: true });
+      document.getElementById("interactionBlocker").style.display = "block";
     }
 
     function disableEventBlocking() {
-      markerContainer.removeEventListener('mousedown', blockAllEvents, true);
-      markerContainer.removeEventListener('mouseup', blockAllEvents, true);
-      markerContainer.removeEventListener('mousemove', blockAllEvents, true);
-      markerContainer.removeEventListener('keydown', blockAllEvents, true);
-      markerContainer.removeEventListener('keyup', blockAllEvents, true);
-      markerContainer.removeEventListener('pointerup', blockAllEvents, true);
-      markerContainer.removeEventListener('touchstart', blockAllEvents, true);
-      markerContainer.removeEventListener('touchmove', blockAllEvents, true);
-      markerContainer.removeEventListener('touchend', blockAllEvents, true);
+      document.getElementById("interactionBlocker").style.display = "none";
     }
 
     const placeMarkerBtn = document.getElementById('placeMarkerBtn');
