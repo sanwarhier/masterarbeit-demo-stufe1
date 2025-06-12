@@ -420,6 +420,27 @@
       setActiveViewButton("view3dBtn");
     }
 
+    function blockAllEvents(e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    function enableEventBlocking() {
+      markerContainer.addEventListener('mousedown', blockAllEvents, true);
+      markerContainer.addEventListener('mouseup', blockAllEvents, true);
+      markerContainer.addEventListener('mousemove', blockAllEvents, true);
+      markerContainer.addEventListener('keydown', blockAllEvents, true);
+      markerContainer.addEventListener('keyup', blockAllEvents, true);
+    }
+
+    function disableEventBlocking() {
+      markerContainer.removeEventListener('mousedown', blockAllEvents, true);
+      markerContainer.removeEventListener('mouseup', blockAllEvents, true);
+      markerContainer.removeEventListener('mousemove', blockAllEvents, true);
+      markerContainer.removeEventListener('keydown', blockAllEvents, true);
+      markerContainer.removeEventListener('keyup', blockAllEvents, true);
+    }
+
     const placeMarkerBtn = document.getElementById('placeMarkerBtn');
     const markerContainer = document.getElementById('markerContainer');
     const infoOverlay = document.getElementById('infoOverlay');
@@ -432,9 +453,10 @@
       placeMarkerBtn.classList.add('active');
       placeMarkerBtn.textContent = "Klicke ins Bild...";
       placeMarkerBtn.disabled = true;
+      enableEventBlocking();
     });
 
-    markerContainer.addEventListener('click', (e) => {
+    markerContainer.addEventListener('pointerup', (e) => {
       if (!placingMarker) return;
 
       e.stopPropagation();
@@ -455,6 +477,8 @@
       placeMarkerBtn.classList.remove('active');
       placeMarkerBtn.textContent = "Hier Markierung malen!";
       infoOverlay.style.display = 'flex';
+
+      disableEventBlocking();
     });
 
     backBtn.addEventListener('click', () => {

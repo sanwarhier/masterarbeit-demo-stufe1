@@ -218,7 +218,7 @@
         });
       }
 
-      function blockAllEvents(e) {
+    function blockAllEvents(e) {
       e.stopPropagation();
       e.preventDefault();
     }
@@ -254,7 +254,7 @@
       enableEventBlocking();
     });
 
-    markerContainer.addEventListener('click', (e) => {
+    markerContainer.addEventListener('pointerup', (e) => {
       if (!placingMarker) return;
 
       e.stopPropagation();
